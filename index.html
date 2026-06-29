@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convex Hull Visualizer - Graham Scan & Jarvis March</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-gradients">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="app-container">
+        <header>
+            <h1>Convex Hull Algorithms</h1>
+            <p>Visualizing Graham Scan & Jarvis March with Style</p>
+            <div class="algorithm-switcher glass">
+                <button id="switch-graham" class="switch-btn active" data-algo="graham">Graham Scan</button>
+                <button id="switch-jarvis" class="switch-btn" data-algo="jarvis">Jarvis March</button>
+            </div>
+        </header>
+
+        <section class="stat-cards">
+            <div class="card glass">
+                <span class="label">Points on Canvas</span>
+                <span class="value" id="points-count">0</span>
+            </div>
+            <div class="card glass">
+                <span class="label">Points on Hull</span>
+                <span class="value" id="hull-count">0</span>
+            </div>
+        </section>
+
+        <section class="main-content">
+            <section class="visualization-area">
+                <div class="canvas-wrapper glass">
+                    <canvas id="hull-canvas"></canvas>
+                    <div id="canvas-hint" class="canvas-hint">Click on the canvas to add points manually</div>
+                </div>
+                <div id="explanation-box" class="explanation-box glass">
+                    Click "Start" to see the convex hull formation or add points by clicking the canvas.
+                </div>
+            </section>
+
+            <aside class="algo-sidebar glass">
+                <h3>Algorithm Info</h3>
+                <div class="side-stat">
+                    <span>Complexity:</span>
+                    <span id="complexity-display">O(n log n)</span>
+                </div>
+                <div class="side-stat">
+                    <span>Approach:</span>
+                    <span id="approach-display">Sorted Polar Angle</span>
+                </div>
+                <div class="divider-h"></div>
+                <div class="algo-description" id="algo-desc">
+                    Graham scan uses a stack to find the convex hull of a finite set of points in the plane with a time complexity of O(n log n).
+                </div>
+            </aside>
+        </section>
+
+        <section id="illustration-panel" class="illustration-panel glass hidden">
+            <header class="panel-header">
+                <h3>Algorithm Logic</h3>
+                <button id="close-illustrate" class="close-btn">&times;</button>
+            </header>
+            <div class="trace-box" id="trace-box">
+                <span class="trace-placeholder">Start the simulation to see live updates...</span>
+            </div>
+            
+            <!-- Graham Scan Pseudocode -->
+            <div class="code-container" id="code-graham">
+                <div class="code-block">
+                    <h4>Graham Scan (O(n log n)):</h4>
+                    <div class="code-line" id="g-line-1">Find point P with lowest Y (base)</div>
+                    <div class="code-line" id="g-line-2">Sort remaining points by polar angle with P</div>
+                    <div class="code-line" id="g-line-3">Initialize Stack with first 3 points</div>
+                    <div class="code-line" id="g-line-4">FOR each point P[i] from sorted list:</div>
+                    <div class="code-line" id="g-line-5">&nbsp;&nbsp;WHILE angle of (next-to-top, top, P[i]) is not left turn:</div>
+                    <div class="code-line" id="g-line-6">&nbsp;&nbsp;&nbsp;&nbsp;Pop point from stack</div>
+                    <div class="code-line" id="g-line-7">&nbsp;&nbsp;Push P[i] to stack</div>
+                    <div class="code-line" id="g-line-8">RETURN stack as Convex Hull</div>
+                </div>
+            </div>
+
+            <!-- Jarvis March Pseudocode -->
+            <div class="code-container hidden" id="code-jarvis">
+                <div class="code-block">
+                    <h4>Jarvis March (O(nh)):</h4>
+                    <div class="code-line" id="j-line-1">leftmost &larr; point with minimum X-coordinate</div>
+                    <div class="code-line" id="j-line-2">p &larr; leftmost</div>
+                    <div class="code-line" id="j-line-3">do:</div>
+                    <div class="code-line" id="j-line-4">&nbsp;&nbsp;add p to hull</div>
+                    <div class="code-line" id="j-line-5">&nbsp;&nbsp;q &larr; (p+1) mod n</div>
+                    <div class="code-line" id="j-line-6">&nbsp;&nbsp;for each point r in points:</div>
+                    <div class="code-line" id="j-line-7">&nbsp;&nbsp;&nbsp;&nbsp;if orientation(p, q, r) == counterclockwise:</div>
+                    <div class="code-line" id="j-line-8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;q &larr; r</div>
+                    <div class="code-line" id="j-line-9">&nbsp;&nbsp;p &larr; q</div>
+                    <div class="code-line" id="j-line-10">until p == leftmost</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="control-panel glass">
+            <div class="controls-bottom">
+                <div class="btn-group">
+                    <button id="rand-btn" class="btn secondary">Add Random</button>
+                    <button id="clear-btn" class="btn secondary">Clear Canvas</button>
+                    <div class="divider"></div>
+                    <button id="play-btn" class="btn primary">Start</button>
+                    <button id="step-btn" class="btn secondary">Step</button>
+                    <button id="reset-btn" class="btn secondary">Reset</button>
+                    <button id="illustrate-btn" class="btn secondary">Illustration</button>
+                </div>
+                <div class="speed-control">
+                    <label for="speed-range">Speed</label>
+                    <input type="range" id="speed-range" min="50" max="1000" step="50" value="400">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
