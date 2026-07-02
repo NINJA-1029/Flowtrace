@@ -483,3 +483,12 @@ document.getElementById('illustrate-btn').addEventListener('click', () => {
 document.getElementById('close-illustrate').addEventListener('click', () => {
     document.getElementById('illustration-panel').classList.add('hidden');
 });
+document.getElementById('view-active-only-cb').addEventListener('change', (e) => {
+    if (e.target.checked) {
+        codeGraham.classList.add('show-active-only');
+        codeJarvis.classList.add('show-active-only');
+    } else {
+        codeGraham.classList.remove('show-active-only');
+        codeJarvis.classList.remove('show-active-only');
+    }
+});
