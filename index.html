@@ -68,7 +68,12 @@
         <section id="illustration-panel" class="illustration-panel glass hidden">
             <header class="panel-header">
                 <h3>Algorithm Logic</h3>
-                <button id="close-illustrate" class="close-btn">&times;</button>
+                <div class="panel-actions" style="display: flex; gap: 10px; align-items: center;">
+                    <label class="toggle-active-only" style="font-size: 0.8rem; display: flex; align-items: center; gap: 5px; cursor: pointer; color: var(--text-dim);">
+                        <input type="checkbox" id="view-active-only-cb"> Active Only
+                    </label>
+                    <button id="close-illustrate" class="close-btn">&times;</button>
+                </div>
             </header>
             <div class="trace-box" id="trace-box">
                 <span class="trace-placeholder">Start the simulation to see live updates...</span>
