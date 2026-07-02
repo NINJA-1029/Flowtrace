@@ -321,6 +321,10 @@ header p {
     border-left: 2px solid #a855f7;
 }
 
+.code-container.show-active-only .code-line:not(.active-line) {
+    display: none;
+}
+
 /* Controls */
 .control-panel {
     padding: 1.5rem;
