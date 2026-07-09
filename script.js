@@ -2,6 +2,7 @@ const canvas = document.getElementById('hull-canvas');
 const ctx = canvas.getContext('2d');
 const pointsCountEl = document.getElementById('points-count');
 const hullCountEl = document.getElementById('hull-count');
+const completionStatusEl = document.getElementById('completion-status');
 const complexityEl = document.getElementById('complexity-display');
 const approachEl = document.getElementById('approach-display');
 const algoDescEl = document.getElementById('algo-desc');
@@ -12,6 +13,28 @@ const explanationBox = document.getElementById('explanation-box');
 const playBtn = document.getElementById('play-btn');
 const stepBtn = document.getElementById('step-btn');
 const speedRange = document.getElementById('speed-range');
+
+function updateStatus(status) {
+    if (!completionStatusEl) return;
+    switch(status) {
+        case 'idle':
+            completionStatusEl.innerText = 'Idle';
+            completionStatusEl.style.color = '#3b82f6';
+            break;
+        case 'running':
+            completionStatusEl.innerText = 'Running';
+            completionStatusEl.style.color = '#a855f7';
+            break;
+        case 'paused':
+            completionStatusEl.innerText = 'Paused';
+            completionStatusEl.style.color = '#f59e0b';
+            break;
+        case 'completed':
+            completionStatusEl.innerText = 'Completed';
+            completionStatusEl.style.color = '#10b981';
+            break;
+    }
+}
 
 let points = [];
 let hull = [];
@@ -439,6 +462,7 @@ function resetSimulation() {
     explanationBox.innerText = 'Click "Start" to see the convex hull formation.';
     updateCodeHighlight(null);
     traceBox.innerHTML = '<span class="trace-placeholder">Start the simulation to see live updates...</span>';
+    updateStatus('idle');
     draw();
 }
 
@@ -447,12 +471,14 @@ function runStep() {
         simulationGenerator = currentAlgorithm === 'graham' ? grahamScanGenerator() : jarvisMarchGenerator();
         isRunning = true;
         playBtn.innerText = 'Pause';
+        updateStatus('running');
     }
     const result = simulationGenerator.next();
     if (result.done) {
         isRunning = false;
         playBtn.innerText = 'Reset';
         simulationGenerator = null;
+        updateStatus('completed');
     }
     return result.done;
 }
@@ -467,12 +493,29 @@ function autoPlay() {
 
 playBtn.addEventListener('click', () => {
     if (playBtn.innerText === 'Reset') { resetSimulation(); return; }
-    if (isRunning) { isRunning = false; playBtn.innerText = 'Resume'; clearTimeout(animationTimeout); }
-    else { isRunning = true; playBtn.innerText = 'Pause'; autoPlay(); }
+    if (isRunning) { 
+        isRunning = false; 
+        playBtn.innerText = 'Resume'; 
+        clearTimeout(animationTimeout); 
+        updateStatus('paused');
+    }
+    else { 
+        isRunning = true; 
+        playBtn.innerText = 'Pause'; 
+        updateStatus('running');
+        autoPlay(); 
+    }
 });
 
 stepBtn.addEventListener('click', () => {
-    if (isRunning) { isRunning = false; playBtn.innerText = 'Resume'; clearTimeout(animationTimeout); }
+    if (isRunning) { 
+        isRunning = false; 
+        playBtn.innerText = 'Resume'; 
+        clearTimeout(animationTimeout); 
+        updateStatus('paused');
+    } else if (simulationGenerator) {
+        updateStatus('paused');
+    }
     runStep();
 });
 
